@@ -1,0 +1,105 @@
+.dashboard {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart {
+  width: 100%;
+  height: 250px;
+}
+
+.chartHeader {
+  width: 100%;
+  display: flex;
+}
+
+.chartHeaderLeft {
+  flex-grow: 0;
+  flex-shrink: 0;
+  text-align: left;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.chartHeaderRight {
+  flex-grow: 1;
+  display: flex;
+  justify-content: right;
+}
+
+.chartFrequencyButton {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.chartFrequencyButtonSelected {
+  background-color: var(--flashpoint-red) !important;
+  transform:translateY(2px);
+  box-shadow: 0px 0px 0px !important;
+}
+
+.dashboardSection {
+  text-align: center;
+  flex-grow: 1;
+  flex-shrink: 0;
+  background-color: var(--flashpoint-cream);
+  border: 0px solid;
+  border-radius: 10px;
+  padding: 0.75rem;
+  min-height: 300px;
+  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboardSectionCounter {
+  min-width: 20%;
+  justify-content: center;
+}
+
+.dashboardSectionGames {
+  min-width: 40%;
+}
+
+.activeNowHeader {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.activeNowMeta {
+  font-style: italic;
+  font-size: 0.8em;
+}
+
+.activeNowCount {
+  font-family: monospace;
+  counter-reset: num var(--num);
+  font-size: 5em;
+  font-weight: bold;
+}
+
+.dashboardRow {
+  gap: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 1200px) {
+  .dashboardRowMany {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 800px) {
+  .dashboardRow {
+    flex-direction: column;
+  }
+  .chartHeader {
+    flex-direction: column;
+  }
+}

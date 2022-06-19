@@ -1,0 +1,17 @@
+.simpleButton {
+  border: 1px solid darkred;
+  border-radius: 5px;
+  color: white;
+  background-color: var(--flashpoint-red-deactive);
+  box-shadow: 0px 2px 2px #777;
+}
+
+.simpleButton:hover {
+  background-color: var(--flashpoint-red-hover);
+}
+
+.simpleButton:active {
+  background-color: var(--flashpoint-red);
+  transform:translateY(2px);
+  box-shadow: 0px 0px 0px;
+}
