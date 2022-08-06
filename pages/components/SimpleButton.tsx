@@ -16,3 +16,5 @@ export function SimpleButton(props: SimpleButtonProps) {
       { ...rest } />
   );
 }
+
+export default SimpleButton;

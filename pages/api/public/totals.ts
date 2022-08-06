@@ -3,7 +3,8 @@ import cache from 'memory-cache';
 import axios from 'axios';
 import { getAxiosOpts } from '../_util';
 
-let gamesPlayed = 4500000;
+let gamesPlayed: number = null;
+let lastCheck = (new Date('2020-01-01')).getTime();
 
 const res = async (req: NextApiRequest, res: NextApiResponse) => {
   const { type } = req.query;
@@ -15,16 +16,30 @@ const res = async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         try {
           const url = new URL(process.env.ANALYTICS_HOST + '/data/events-count');
+          const newDate = Date.now();
           const query = {
-            from: Math.floor((new Date("2020-01-01").getTime() / 1000)),
-            to: Math.floor((Date.now() / 1000)),
-            event_category: 'b',
+            from: Math.floor(lastCheck / 1000),
+            to: Math.floor((newDate / 1000)),
+            event_category: 'Games',
+            event_key: 'gameLaunch'
           };
-  
+          
           const aRes = await axios.post(url.toString(), query, getAxiosOpts());
+          const json: Array<any> = aRes.data.result;
+          const newPlays = json.reduce<number>((prev, cur) => prev + cur.event_count, 0);
           // 10 Second Cache
-          cache.put('games-played', aRes.data.result, 1000 * 10);
-          res.status(200).json(aRes.data.result);
+          gamesPlayed += newPlays;
+          if (gamesPlayed === (newPlays * 2)) {
+            // Duplicate call, just add initial burst once
+            gamesPlayed = newPlays;
+          }
+          lastCheck = newDate;
+
+          const response =  {
+            count: gamesPlayed
+          };
+          cache.put('games-played', response, 1000 * 10);
+          res.status(200).json(response);
         } catch (err) {
           res.status(500).json({ error: 'failed to fetch data' });
         }

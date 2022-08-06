@@ -8,10 +8,15 @@ export async function fetchGames(ids: string[]) {
     headers: getDirectusHeaders(),
     method: 'SEARCH',
     data: {
-      "id": {
-        "_in": [...ids]
+      "query": {
+        "filter": {
+          "id": {
+            "_in": [...ids]
+          }        
+        }
       }
-    }
+    },
+    timeout: 5000
   });
   return res.data.data;
 }

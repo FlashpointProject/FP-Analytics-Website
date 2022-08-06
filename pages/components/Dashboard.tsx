@@ -4,8 +4,8 @@ import * as React from 'react';
 import CountUp from 'react-countup';
 import { Chart as GoogleChart, GoogleChartWrapper } from "react-google-charts";
 import styles from '../../styles/Dashboard.module.css';
-import { isBrowser } from '../util';
 import { SimpleButton } from './SimpleButton';
+import * as countryCodeLookup from 'country-code-lookup';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -21,9 +21,8 @@ type TimeScale = '1-day' | '7-days' | '30-days';
 
 type Game = {
   id: string;
-  title: string;
-  platform: string;
-  count: number;
+  playCount: number;
+  title?: string;
 }
 
 export function Dashboard(props: DashboardProps) {
@@ -41,7 +40,7 @@ export function Dashboard(props: DashboardProps) {
   const [apexOptions, setApexOptions] = React.useState<ApexOptions>(baseConfigActiveUsers);
   const [apexSeries, setApexSeries] = React.useState<ApexAxisChartSeries>(null);
   const [timeScale, setTimeScale] = React.useState<TimeScale>('1-day');
-  const [geoData, setGeoData] = React.useState<any>({});
+  const [geoData, setGeoData] = React.useState<any>([["Country", "User Count"]]);
   const [geoSelected, setGeoSelected] = React.useState<string>(null);
 
   // Geo Map
@@ -49,8 +48,10 @@ export function Dashboard(props: DashboardProps) {
     const fetchData = async () => {
       const res = await fetch('api/public/geo');
       if (res.ok) {
+        const data = await res.json();
+        console.log(data);
         const geo: any = [["Country", "User Count"]];
-        const json: Record<string, number> = await res.json();
+        const json: Record<string, number> = data;
         let total = 0;
         for(const e of Object.entries(json)) {
           total += e[1];
@@ -66,21 +67,24 @@ export function Dashboard(props: DashboardProps) {
   // Most Played Games
   React.useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('api/public/games');
+      const res = await fetch('api/public/games?limit=20');
       if (res.ok) {
         const json = await res.json();
         const rows: Array<Game> = json;
         const options: ApexOptions = {
           ...baseConfigGames,
           xaxis: {
-            categories: rows.map(row => row.title)
+            categories: rows.map(row => row.title || row.id),
+            labels: {
+              trim: false
+            }
           }
         };
         const series = [
           {
             name: 'Play Count',
             type: 'bar',
-            data: rows.map(row => row.count)
+            data: rows.map(row => row.playCount)
           }
         ];
         setGamesApexOptions(options);
@@ -133,8 +137,8 @@ export function Dashboard(props: DashboardProps) {
       }
       res = await fetch('api/public/totals?type=games-played');
       if (res.ok) {
-        const json: Array<any> = await res.json(); 
-        const count = json.reduce<number>((prev, cur) => prev + cur.event_count, 0);
+        const json: any = await res.json(); 
+        const count = json.count;
         setGamesPlayedLast(lastGamesPlayed);
         lastGamesPlayed = count;
         setGamesPlayed(count);
@@ -151,6 +155,7 @@ export function Dashboard(props: DashboardProps) {
 
   // Active Users
   React.useEffect(() => {
+    setApexSeries([]);
     async function fetchData() {
       const res = await fetch(`api/public/online?interval=${timeScale}`);
       if (res.ok) {
@@ -170,7 +175,7 @@ export function Dashboard(props: DashboardProps) {
           {
             name: 'Active Users',
             type: 'area',
-            data: rows.map((row) => row.online_count),
+            data: rows.map((row) => row.online_count || 0),
           }
         ];
         const opts: ApexOptions = {
@@ -224,7 +229,7 @@ export function Dashboard(props: DashboardProps) {
     const selection = chart.getSelection();
     if (selection.length === 0) return;
     const region = geoData[selection[0].row + 1];
-    setGeoSelected(region);
+    setGeoSelected(region[0]);
   }, [geoData]);
 
   const geoMapRender = React.useMemo(() => 
@@ -245,6 +250,8 @@ export function Dashboard(props: DashboardProps) {
     data={geoData} />
   , [geoData, geoMapSelectCallback]);
 
+  const country = geoSelected ? countryCodeLookup.byIso(geoSelected) : '';
+
   return (
     <div className={styles.dashboard}>
       <div className={styles.dashboardRow}>
@@ -258,7 +265,7 @@ export function Dashboard(props: DashboardProps) {
             { (isBrowser) ? (
               <>
                 <div className={styles.chartHeader}>
-                  <div className={styles.chartHeaderLeft}>Active Users</div>
+                  <div className={styles.chartHeaderLeft}>{`Active Users ${geoSelected ? ` - ${country ? country.country : geoSelected}` : ''}`}</div>
                   <div className={styles.chartHeaderRight}>
                     <SimpleButton
                       className={`${styles.chartFrequencyButton} ${timeScale === '1-day' ? styles.chartFrequencyButtonSelected : ''}`}
@@ -420,3 +427,7 @@ type Hardware = {
   arch: Array<HardwareCount>,
   operatingSystem: Array<HardwareCount>
 }
+
+const isBrowser = (typeof window !== undefined);
+
+export default Dashboard;
