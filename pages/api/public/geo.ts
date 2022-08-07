@@ -22,7 +22,7 @@ const res = async (_: NextApiRequest, res: NextApiResponse) => {
 				}
 			});
 			const geo = Array.isArray(aRes.data.result) ? aRes.data.result[0].per_country : aRes.data.result.per_country;
-			// Cache for 10 seconds
+			// Cache for 1 day
 			cache.put('geo-map', geo, 1000 * 60 * 60 * 24);
 			res.status(200).json(geo);
 		} catch (error) {

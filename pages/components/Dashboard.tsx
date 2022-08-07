@@ -74,6 +74,7 @@ export function Dashboard(props: DashboardProps) {
         const options: ApexOptions = {
           ...baseConfigGames,
           xaxis: {
+            
             categories: rows.map(row => row.title || row.id),
             labels: {
               trim: false
@@ -175,13 +176,17 @@ export function Dashboard(props: DashboardProps) {
           {
             name: 'Active Users',
             type: 'area',
-            data: rows.map((row) => row.online_count || 0),
+            data: rows.map((row) => {
+              return {
+                x: new Date(row.time).getTime(),
+                y: row.online_count || 0
+              }
+            }),
           }
         ];
         const opts: ApexOptions = {
           ...baseConfigActiveUsers,
           xaxis: {
-            categories: rows.map((row) => (new Date(row.time).getTime())),
             type: 'datetime',
             axisTicks: {
               show: true,
@@ -349,7 +354,7 @@ export function Dashboard(props: DashboardProps) {
 
 const baseConfigGames: ApexOptions = {
   chart: {
-    type: 'area',
+    type: 'bar',
     animations: {
       enabled: false
     }
@@ -363,7 +368,7 @@ const baseConfigGames: ApexOptions = {
   plotOptions: {
     bar: {
       borderRadius: 4,
-      horizontal: true,
+      horizontal: false,
     }
   }
 }

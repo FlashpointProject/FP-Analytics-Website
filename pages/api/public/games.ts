@@ -67,7 +67,8 @@ const res = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 async function fillWithDirectus(games: Game[]) {
-  const directusGames = await fetchGames(games.map(g => g.id));
+  const directusGames = await fetchGames(games.slice(0,49).map(g => g.id));
+  games[0].title = 'Poptropica'; // REMOVE THIS LATER
   for (const g of directusGames) {
     const gameIdx = games.findIndex(game => game.id === g.id);
     if (gameIdx > -1) {
