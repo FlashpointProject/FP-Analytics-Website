@@ -194,7 +194,7 @@ export function Dashboard(props: DashboardProps) {
             },
             axisBorder: {
               show: true
-            }
+            },
           },
           markers: {
             size: 4
@@ -399,6 +399,9 @@ const baseConfigActiveUsers: ApexOptions = {
     animations: {
       enabled: false
     }
+  },
+  xaxis: {
+    type: 'datetime'
   },
   dataLabels: {
     enabled: false
