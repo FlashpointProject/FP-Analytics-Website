@@ -304,7 +304,7 @@ export function Dashboard(props: DashboardProps) {
           {geoMapRender}
         </div>
         <div className={`${styles.dashboardSection} ${styles.dashboardSectionCounter}`}>
-          <div className={styles.activeNowHeader}>Games Played</div>
+          <div className={styles.activeNowHeader}>Total Games Played</div>
           <div className={styles.activeNowCount}>
             <CountUp duration={gamesPlayedLast === 0 ? 3 : 10} separator="," start={gamesPlayedLast} end={gamesPlayed}/>
           </div>
