@@ -67,7 +67,7 @@ export function Dashboard(props: DashboardProps) {
   // Most Played Games
   React.useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('api/public/games?limit=20');
+      const res = await fetch('api/public/games?limit=40');
       if (res.ok) {
         const json = await res.json();
         const rows: Array<Game> = json;

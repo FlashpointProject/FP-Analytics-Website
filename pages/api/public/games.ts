@@ -33,7 +33,7 @@ const res = async (req: NextApiRequest, res: NextApiResponse) => {
         event_category: 'Games',
         event_key: 'gameLaunch'
       };
-      
+
       const aRes = await axios.post(url.toString(), query, getAxiosOpts());
       const data: Array<any> = aRes.data.result;
       let response = data.sort((a, b) => a.event_value - b.event_value).map<Game>(d => {
@@ -48,7 +48,7 @@ const res = async (req: NextApiRequest, res: NextApiResponse) => {
       } catch (err) {
         console.error(err);
       }
-
+      
       // 1 Hour cache
       cache.put('all-games', response, 1000 * 60 * 60);
       if (limit && typeof limit === 'string') {
@@ -67,7 +67,7 @@ const res = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 async function fillWithDirectus(games: Game[]) {
-  const directusGames = await fetchGames(games.slice(0,49).map(g => g.id));
+  const directusGames = await fetchGames(games.slice(0,50).map(g => g.id));
   games[0].title = 'Poptropica'; // REMOVE THIS LATER
   for (const g of directusGames) {
     const gameIdx = games.findIndex(game => game.id === g.id);
