@@ -131,7 +131,7 @@ export function Dashboard(props: DashboardProps) {
       let res = await fetch('api/public/online?interval=now');
       if (res.ok) {
         const json = await res.json(); 
-        const count = Array.isArray(json) ? json[0].online_count : json.online_count;
+        const count = json.online_count;
         setActiveNow(count || 0);
       } else {
         setActiveNow(0);

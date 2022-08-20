@@ -25,8 +25,12 @@ const res = async (req: NextApiRequest, res: NextApiResponse) => {
             }
           });
           // Cache for 10 seconds
-          cache.put('active-users-now', aRes.data.result[0], 1000 * 10);
-          res.status(200).json(aRes.data.result);
+          const activeUsersNow = aRes.data.result.reduce((prev: number, cur: any) => prev += (cur.online_count || 0), 0)
+          const response = {
+            online_count: activeUsersNow
+          }
+          cache.put('active-users-now', response, 1000 * 10);
+          res.status(200).json(response);
         } catch (error) {
           res.status(500).json({ error: 'failed to fetch data' });
         }
