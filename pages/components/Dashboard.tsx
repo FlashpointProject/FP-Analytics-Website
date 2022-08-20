@@ -249,7 +249,8 @@ export function Dashboard(props: DashboardProps) {
     width="100%"
     height="300px"
     options={{
-      colors: ["#FFFFFF", '#DD042B'],
+      colors: ["#fcd4db", '#ea8f9f', '#DD042B'],
+      datalessRegionColor: '#FFFFFF',
       backgroundColor: "#FFE0E4"
     }}
     data={geoData} />
