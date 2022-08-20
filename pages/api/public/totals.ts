@@ -68,7 +68,6 @@ const res = async (req: NextApiRequest, res: NextApiResponse) => {
             .catch((err) => {
               reject(err);
             });
-
           })
           await gamesCheck
           .then((count) => {
@@ -77,6 +76,7 @@ const res = async (req: NextApiRequest, res: NextApiResponse) => {
           .catch((err) => {
             gamesListener.emit('done', 0, err)
           })
+          gamesCheck = undefined;
           
         } catch (err) {
           res.status(500).json({ error: 'failed to fetch data' });
