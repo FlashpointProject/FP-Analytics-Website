@@ -8,7 +8,7 @@ import { rejects } from 'assert';
 let gamesPlayed: number = null;
 let lastCheck = (new Date('2020-01-01')).getTime();
 let gamesCheck: Promise<number> | undefined;
-let gamesListener: EventEmitter = new EventEmitter();
+let gamesListener: EventEmitter = new EventEmitter().setMaxListeners(1000);
 
 const res = async (req: NextApiRequest, res: NextApiResponse) => {
   const { type } = req.query;
@@ -40,9 +40,10 @@ const res = async (req: NextApiRequest, res: NextApiResponse) => {
           return;
         }
         try {
+          console.log('fetching total: Current ' + gamesPlayed + ' Last ' + lastCheck)
+          const newDate = Date.now() - 1000; // Compensate for drift
           gamesCheck = new Promise<number>(async (resolve, reject) => {
             const url = new URL(process.env.ANALYTICS_HOST + '/data/events-count');
-            const newDate = Date.now() - 1000; // Compensate for drift
             const query = {
               from: Math.floor(lastCheck / 1000),
               to: Math.floor((newDate / 1000)),
@@ -54,28 +55,30 @@ const res = async (req: NextApiRequest, res: NextApiResponse) => {
             .then((aRes) => {
               const json: Array<any> = aRes.data.result;
               const newPlays = json.reduce<number>((prev, cur) => prev + cur.event_count, 0);
-              // 10 Second Cache
-              gamesPlayed += newPlays;
-              lastCheck = newDate;
-    
-              const response =  {
-                count: gamesPlayed
-              };
-              cache.put('games-played', response, 1000 * 10);
-              res.status(200).json(response);
-              resolve(gamesPlayed);
+              resolve(newPlays);
             })
             .catch((err) => {
               reject(err);
             });
           })
-          await gamesCheck
+          const count = await gamesCheck
           .then((count) => {
-            gamesListener.emit('done', count, undefined)
+            gamesListener.emit('done', gamesPlayed + count, undefined)
+            return count;
           })
           .catch((err) => {
             gamesListener.emit('done', 0, err)
           })
+          if (typeof count === 'number') {
+            gamesPlayed += count;
+            lastCheck = newDate;
+            const response =  {
+              count: gamesPlayed
+            };
+            // 10 second cache
+            cache.put('games-played', response, 1000 * 10);
+            res.status(200).json(response);
+          }
           gamesCheck = undefined;
           
         } catch (err) {
