@@ -21,7 +21,18 @@ const res = async (_: NextApiRequest, res: NextApiResponse) => {
 					'Authorization': `Bearer ${process.env.ANALYTICS_TOKEN}`
 				}
 			});
-			const geo = Array.isArray(aRes.data.result) ? aRes.data.result[0].per_country : aRes.data.result.per_country;
+			const geo = Array.isArray(aRes.data.result) ? aRes.data.result.reduce((prev: any, cur: any) => {
+				if (cur.per_country) {
+					for (const [key, value] of Object.entries(cur.per_country)) {
+						if (prev[key]) {
+							prev[key] += value || 0;
+						} else {
+							prev[key] = value || 0;
+						}
+					}
+				}
+				return prev;
+			}, {}) : aRes.data.result.per_country;
 			// Cache for 1 day
 			cache.put('geo-map', geo, 1000 * 60 * 60 * 24);
 			res.status(200).json(geo);
