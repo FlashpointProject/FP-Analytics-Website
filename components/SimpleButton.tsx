@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../../styles/SimpleButton.module.css';
+import styles from '../styles/SimpleButton.module.css';
 
 /** Props for an input element. */
 type InputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;

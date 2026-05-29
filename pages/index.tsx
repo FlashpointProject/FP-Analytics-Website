@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { Dashboard } from './components/Dashboard'
+import { Dashboard } from '../components/Dashboard'
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
           Flashpoint Analytics
         </div>
         <div className={styles.headerRight}>
-          v1.0
+          v2.0
         </div>
       </div>
 
