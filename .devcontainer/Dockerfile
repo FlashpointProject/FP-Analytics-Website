@@ -1,5 +1,5 @@
 # [Choice] Node.js version.
-ARG VARIANT=22-bookworm
+ARG VARIANT=24-bookworm
 FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:${VARIANT}
 
 # [Optional] Uncomment this section to install additional OS packages.
