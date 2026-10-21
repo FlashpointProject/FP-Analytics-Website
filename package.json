@@ -6,28 +6,28 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test:hardware-os": "node scripts/test-hardware-os-classifier.js"
   },
   "dependencies": {
-    "apexcharts": "^5.13.0",
-    "axios": "1.16.1",
-    "country-code-lookup": "^0.1.5",
+    "apexcharts": "^8.4.1",
+    "axios": "1.20.0",
+    "country-code-lookup": "^0.2.1",
     "memory-cache": "^0.2.0",
-    "next": "15.5.18",
-    "react": "18.3.1",
-    "react-apexcharts": "^2.1.0",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-apexcharts": "^2.1.1",
     "react-countup": "^6.5.3",
-    "react-dom": "18.3.1",
-    "react-google-charts": "^4.0.7"
+    "react-dom": "19.3.1",
+    "react-google-charts": "^5.2.1"
   },
   "devDependencies": {
-    "@types/memory-cache": "^0.2.2",
-    "@types/node": "^22.0.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "15.5.18",
-    "typescript": "^5.9.0"
+    "@types/memory-cache": "^0.2.6",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^10.13.0",
+    "eslint-config-next": "16.4.2",
+    "typescript": "^6.0.3"
   }
 }
